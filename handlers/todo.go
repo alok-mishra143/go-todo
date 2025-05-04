@@ -1,16 +1,20 @@
 package handlers
 
 import (
+	"time"
+
 	"github.com/alok-mishra143/go-todo/config"
 	"github.com/gofiber/fiber/v2"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type Todo struct {
 	ID        primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
 	Completed bool               `json:"completed"`
 	Body      string             `json:"body"`
+	CreatedAt primitive.DateTime `json:"createdAt,omitempty" bson:"createdAt,omitempty"`
 }
 
 
@@ -21,7 +25,9 @@ func GetTodos(c *fiber.Ctx) error {
 	db := config.GetCollection()
 	var todo []Todo
 
-	cursor,err:=db.Find(c.Context(),bson.M{})
+	opts := options.Find().SetSort(bson.D{{Key: "createdAt", Value: -1}})
+
+	cursor,err:=db.Find(c.Context(),bson.M{},opts)
 
 	if err!=nil{
 		return c.Status(500).JSON(fiber.Map{"error": "Error fetching todos"})
@@ -38,7 +44,7 @@ func GetTodos(c *fiber.Ctx) error {
 	if err := cursor.Close(c.Context()); err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": "Error closing cursor"})
 	}
-	return c.JSON(todo)
+	return c.JSON(fiber.Map{"data": todo})
 }
 
 // ? Create a new todo
@@ -55,6 +61,7 @@ func CreateTodo(c *fiber.Ctx) error {
 	}
 
 	db := config.GetCollection()
+	todo.CreatedAt = primitive.NewDateTimeFromTime(time.Now())
 
 	Result,err:=db.InsertOne(c.Context(),todo)
 	if err!=nil{
@@ -62,6 +69,7 @@ func CreateTodo(c *fiber.Ctx) error {
 	}
 
 	todo.ID=Result.InsertedID.(primitive.ObjectID)
+
 
 	return c.Status(201).JSON(fiber.Map{"meassage": "Todo created successfully", "todo": todo})
 }
