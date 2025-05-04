@@ -5,11 +5,11 @@ import (
 	"log"
 	"os"
 
-	"github.com/gofiber/fiber/v2"
-	"github.com/joho/godotenv"
 	"github.com/alok-mishra143/go-todo/config"
 	"github.com/alok-mishra143/go-todo/routes"
-
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/joho/godotenv"
 )
 
 func main(){
@@ -27,6 +27,17 @@ func main(){
 
 	// Fiber instance
 	app := fiber.New()
+
+	front_url:=os.Getenv("FRONT_URL")
+	if front_url==""{
+		front_url="http://localhost:5173"
+		fmt.Println("No front url specified, using default url http://localhost:3000")
+	}
+	
+	app.Use(cors.New(cors.Config{
+		AllowOrigins: front_url,
+		AllowMethods: "GET,POST,PUT,DELETE,PATCH",
+	}))
 
 	// Register routes
 	routes.TodoRoutes(app)
