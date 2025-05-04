@@ -1,0 +1,50 @@
+# Binaries for programs and plugins
+*.exe
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+*.o
+*.a
+
+# Build and dependency folders
+/bin/
+/vendor/
+_obj
+_test
+
+# Go workspace files
+go.work
+go.work.sum
+
+# Environment files
+.env
+
+# Logs
+*.log
+logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Node-related (for frontend or tooling)
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# macOS
+.DS_Store
+
+# Editor config
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
