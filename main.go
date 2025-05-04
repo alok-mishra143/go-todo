@@ -16,9 +16,10 @@ func main(){
 
 	fmt.Println("Starting server...")
 
-	if err := godotenv.Load(".env"); err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	if err := godotenv.Load(); err != nil {
+    log.Println("No .env file found, using system environment variables")
+}
+
 
 
 		// Connect to MongoDB
